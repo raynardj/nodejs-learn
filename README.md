@@ -1,5 +1,5 @@
 # nodejs-learn
-Learning node.js environment
+> Learning node.js environment
 
 ## Building docker 
 ```shell
