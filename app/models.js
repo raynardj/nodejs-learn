@@ -7,7 +7,7 @@ class User extends Model {}
 User.init({
     username:DataTypes.STRING,
     birthday:DataTypes.DATE
-},{squaelize, modelName:"user"});
+},{sequelize, modelName:"user"});
 
 sequelize.sync()
     .then(()=> User.create({
