@@ -41,3 +41,8 @@ DBs.create({name:"hugedb1",conn_str:"abc/def/ghi"})
             console.log(api.toJSON());
         })
     })
+module.exports = {
+    DBs:DBs,
+    SqlApi:SqlApi,
+    sequelize:sequelize
+}
