@@ -2,38 +2,28 @@ const http  = require("http");
 
 const {sequelize,DBs,SqlApi} = require("./models");
 
+const express = require('express')
+const app = express()
 
 const hostname  = "0.0.0.0";
 const port = 3000;
 
-const server = http.createServer(async (req,res)=>{
-    const now = new Date()
-    if(req.url=="/")
-    {
-        res.statusCode = 200;
-        res.setHeader('Content-Type','text/plain');
-        console.log(`${now.toLocaleTimeString()}[${req.method}]`)
-        res.end("Hello Pretty");
-    }
-    else if (req.url.startsWith("/api/")){
-        res.statusCode = 200;
-        const slug  = req.url.slice(5);
-        console.log(slug)
+app.get("/", (req,res)=>{
+    console.log("Loading main page");
+    res.send("Hello Pretty");
+})
 
-        const api_obj = await SqlApi.findOne({where:{slug:slug}})
-        var msg = ""
-        if(api_obj ==null){
-            msg = `${slug} Not Found`;
-        }else{
-            msg = `Running the sql line:\t${api_obj.sql}`;
-        }
+app.get("/api/:slug",async (req,res)=>{
+    const {slug} = req.params;
+    const api_obj = await SqlApi.findOne({where:{slug:slug}});
 
-        res.setHeader('Content-Type','application/json');
-        console.log(`${now.toLocaleTimeString()}[${req.method}]${msg}`)
-        res.end(msg);
+    var msg = "";
+    if(api_obj == null){
+        msg = `${slug} Not Found`;
+    }else{
+        msg = `Running the sql line:\t${api_obj.sql}`;
+        res.send(msg);
     }
 })
 
-server.listen(port,hostname, ()=>{
-    console.log(`Server running at http://${hostname}:${port}/`);
-})
+app.listen(port,()=> console.log(`App running on port ${port}`))
