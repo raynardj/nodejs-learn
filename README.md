@@ -3,10 +3,24 @@
 
 ## Building docker 
 ```shell
-docker build -t nlearn ./docker/
+cd nodejs-learn
+docker build -t nlearn .
 ```
 
 ## Starting shell 
+
+You have to run the ```start.sh``` within its parent dir
 ```
-bash docker/start.sh
+bash start.sh
+```
+## Run app service
+
+For testing
+```
+nodemon
+```
+
+For production
+```
+node app.js
 ```
