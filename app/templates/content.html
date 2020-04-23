@@ -1,0 +1,16 @@
+{%extends "base.html"%}
+
+{%block content%}
+<h3>
+    {{slug}}: path <span class="text-warning">{{path}}</span>
+</h3>
+
+<pre><code>{{full_path}}</code></pre>
+
+<a class="btn btn-warning" href="/static/dirpage/{{slug}}{{path}}">Parent</a>
+<hr>
+
+<pre>
+{{data}}
+</pre>
+{%endblock%}

@@ -10,16 +10,26 @@ const fs = require('fs')
 router.get("/show/:slug", async (req, res) => {
     const obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
     if (obj) { res.json(obj) }
-    else {
+    else { 
         res.statusCode = 400;
         res.json({ msg: `bad request, no slug ${req.params.slug}` })
     }
 })
+router.get("/showpage/:slug", async (req,res) =>{
+    const obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
+    if (obj) { res.render("show_static.html",{data:obj}) }
+    else { 
+        res.statusCode = 400;
+        res.json({ msg: `bad request, no slug ${req.params.slug}` })
+    }
+})
+
 // list all the static directories
 router.get("/list", async (req, res) => {
     obj = await StaticLocation.findAll({})
     res.json(obj)
 })
+
 // add a new static directory
 router.post("/add", jsonParser, async (req, res) => {
     await StaticLocation.create(req.body)
@@ -59,6 +69,54 @@ router.get("/dir/:slug/*", async (req, res) => {
                         } else {
                             // return the file content string
                             res.json({ file: data, path: detail_path })
+                        }
+                    })
+                }
+                else {
+                    res.statusCode = 400;
+                    res.json({ msg: `path:${detail_path} not found` });
+                }
+            })
+        }
+    }
+    else {
+        res.statusCode = 400;
+        res.json({ msg: `bad request, no slug ${req.params.slug}` })
+    }
+})
+
+router.get("/dirpage/:slug/*", async (req, res) => {
+    obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
+    if (obj) {
+        const prepend_len = `/static/dirpage/${req.params.slug}`.length
+        // reconstruct the detailed path
+        const tail_path = req.originalUrl.substring(prepend_len)
+        const detail_path = path.join(obj.root_path,tail_path )
+
+        // check absolute path
+        if (!path.isAbsolute(detail_path)) {
+            res.statusCode = 400;
+            res.json({ msg: `path:${detail_path} not correct` })
+        } else {
+            fs.exists(detail_path, result => {
+                if (result) {
+                    fs.readFile(detail_path, 'utf8', (err, data) => {
+                        if (err) {
+                            // if we can not read that file, it might be a directory
+                            fs.readdir(detail_path, (err, data) => {
+                                if (err) {
+                                    // if still error
+                                    res.json({ msg: `can not read file ${detail_path}` })
+                                }
+                                // list dir files
+                                const path = tail_path.slice(-1,)=="/"?tail_path.slice(0,-1):tail_path
+                                res.render("dirpage.html",{data:data,path:path,slug:req.params.slug})
+                            })
+                        } else {
+                            // return the file content string
+                            const parent_path = tail_path.slice(0,Math.max(tail_path.lastIndexOf("/"),0)+1)
+
+                            res.render("content.html",{data:data,path:parent_path,slug:req.params.slug, full_path = tail_path})
                         }
                     })
                 }

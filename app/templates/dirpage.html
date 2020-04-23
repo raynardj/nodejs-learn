@@ -1,0 +1,14 @@
+{%extends "base.html" %}
+
+{%block content%}
+<h2 class="mb-5">
+    Folder <span class="text-primary">{{path}}</span>
+</h2>
+<ul class="list-group">
+    {%for i in data%}
+        <li class="list-group-item">
+            <a href="/static/dirpage/{{slug}}{{path}}/{{i}}">{{i}}</a>
+        </li>
+    {%endfor%}
+</ul>
+{%endblock%}
