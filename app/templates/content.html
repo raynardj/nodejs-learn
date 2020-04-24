@@ -2,12 +2,15 @@
 
 {%block content%}
 <h3>
-    {{slug}}: path <span class="text-warning">{{path}}</span>
+    {{slug}}: path <span class="text-warning"><strong>{{path}}</strong></span>
 </h3>
 
+File Path:
 <pre><code>{{full_path}}</code></pre>
 
 <a class="btn btn-warning" href="/static/dirpage/{{slug}}{{path}}">Parent</a>
+<a class="btn btn-success" target="_blank" href="/static/dirraw/{{slug}}{{full_path}}">Raw Text</a>
+
 <hr>
 
 <pre>

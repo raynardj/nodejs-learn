@@ -91,13 +91,38 @@ router.get("/dir/:slug/*", async (req, res) => {
     }
 })
 
+function calc_path(req,pagetype,root_path){
+    const prepend_len = `/static/${pagetype}/${req.params.slug}`.length
+        // reconstruct the detailed path
+        const tail_path = req.originalUrl.substring(prepend_len);
+        const detail_path = path.join(root_path,tail_path );
+        return {tail_path,detail_path,prepend_len};
+}
+// return raw file content
+router.get("/dirraw/:slug/*", async (req,res) => {
+    obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
+    if (obj) {
+        const {tail_path,detail_path,prepend_len} = calc_path(req,"dirraw",obj.root_path)
+        fs.exists(detail_path,result =>{
+            if(result){
+                fs.readFile(detail_path,"utf8",(err,data) =>{
+                    if (err) res.json({ msg: `can not read path:${detail_path}` });
+                    else {
+                        res.send(data)
+                    }
+                })
+            }
+            else{
+                res.json({ msg: `path:${detail_path} not found` });
+            }
+        })
+    }
+})
+
 router.get("/dirpage/:slug/*", async (req, res) => {
     obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
     if (obj) {
-        const prepend_len = `/static/dirpage/${req.params.slug}`.length
-        // reconstruct the detailed path
-        const tail_path = req.originalUrl.substring(prepend_len)
-        const detail_path = path.join(obj.root_path,tail_path )
+        const {tail_path,detail_path,prepend_len} = calc_path(req,"dirpage",obj.root_path)
 
         // check absolute path
         if (!path.isAbsolute(detail_path)) {
@@ -120,9 +145,12 @@ router.get("/dirpage/:slug/*", async (req, res) => {
                             })
                         } else {
                             // return the file content string
+                            if(req.params.format == "raw") res.send(data)
+                            else{
+                            // return a page contains content
                             const parent_path = tail_path.slice(0,Math.max(tail_path.lastIndexOf("/"),0)+1)
-
                             res.render("content.html",{data:data,path:parent_path,slug:req.params.slug, full_path: tail_path})
+                            }
                         }
                     })
                 }
