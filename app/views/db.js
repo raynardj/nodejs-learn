@@ -11,6 +11,10 @@ router.get('/list',(req,res)=>{
     DBs.findAll({where:{}})
         .then(dbs=> res.json(dbs))
 })
+router.get("/listpage",async (req,res)=>{
+    const dbs = await DBs.findAll({})
+    res.render("db_list.html",{dbs})
+})
 var jsonParser = bodyParser.json()
 router.post('/add',jsonParser,(req,res)=>{
     console.log(req.body);

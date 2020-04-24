@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { StaticLocation } = require('../models');
+const {
+    StaticLocation
+} = require('../models');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json()
 const path = require('path')
@@ -8,19 +10,35 @@ const fs = require('fs')
 
 // show the detail of a static directory by slug
 router.get("/show/:slug", async (req, res) => {
-    const obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
-    if (obj) { res.json(obj) }
-    else { 
+    const obj = await StaticLocation.findOne({
+        where: {
+            slug: req.params.slug
+        }
+    })
+    if (obj) {
+        res.json(obj)
+    } else {
         res.statusCode = 400;
-        res.json({ msg: `bad request, no slug ${req.params.slug}` })
+        res.json({
+            msg: `bad request, no slug ${req.params.slug}`
+        })
     }
 })
-router.get("/showpage/:slug", async (req,res) =>{
-    const obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
-    if (obj) { res.render("show_static.html",{data:obj}) }
-    else { 
+router.get("/showpage/:slug", async (req, res) => {
+    const obj = await StaticLocation.findOne({
+        where: {
+            slug: req.params.slug
+        }
+    })
+    if (obj) {
+        res.render("show_static.html", {
+            data: obj
+        })
+    } else {
         res.statusCode = 400;
-        res.json({ msg: `bad request, no slug ${req.params.slug}` })
+        res.json({
+            msg: `bad request, no slug ${req.params.slug}`
+        })
     }
 })
 
@@ -32,28 +50,49 @@ router.get("/list", async (req, res) => {
 
 // list all the static directories
 router.get("/listpage", async (req, res) => {
-    const {slug,root_path,md_doc} = req.query
-    if(slug&& root_path) {
-        StaticLocation.create({slug,root_path,md_doc});
+    const {
+        slug,
+        root_path,
+        md_doc
+    } = req.query
+    if (slug && root_path) {
+        StaticLocation.create({
+            slug,
+            root_path,
+            md_doc
+        });
     }
     obj = await StaticLocation.findAll({})
-    res.render("static_list.html",{obj})
+    res.render("static_list.html", {
+        obj
+    })
 })
 
 // add a new static directory
 router.post("/add", jsonParser, async (req, res) => {
     await StaticLocation.create(req.body)
-    res.json({ data: req.body, msg: "Add success" })
+    res.json({
+        data: req.body,
+        msg: "Add success"
+    })
 })
 // delete
 router.get("/delete/:slug", async (req, res) => {
-    const obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
+    const obj = await StaticLocation.findOne({
+        where: {
+            slug: req.params.slug
+        }
+    })
     obj.destroy()
     res.redirect("/static/listpage")
 })
 // static api
 router.get("/dir/:slug/*", async (req, res) => {
-    obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
+    obj = await StaticLocation.findOne({
+        where: {
+            slug: req.params.slug
+        }
+    })
     if (obj) {
         const prepend_len = `/static/dir/${req.params.slug}`.length
         // reconstruct the detailed path
@@ -62,7 +101,9 @@ router.get("/dir/:slug/*", async (req, res) => {
         // check absolute path
         if (!path.isAbsolute(detail_path)) {
             res.statusCode = 400;
-            res.json({ msg: `path:${detail_path} not correct` })
+            res.json({
+                msg: `path:${detail_path} not correct`
+            })
         } else {
             fs.exists(detail_path, result => {
                 if (result) {
@@ -72,67 +113,102 @@ router.get("/dir/:slug/*", async (req, res) => {
                             fs.readdir(detail_path, (err, data) => {
                                 if (err) {
                                     // if still error
-                                    res.json({ msg: `can not read file ${detail_path}` })
+                                    res.json({
+                                        msg: `can not read file ${detail_path}`
+                                    })
                                 }
                                 // list dir files
-                                res.json({ dir: data, pwd: detail_path, })
+                                res.json({
+                                    dir: data,
+                                    pwd: detail_path,
+                                })
                             })
                         } else {
                             // return the file content string
-                            res.json({ file: data, path: detail_path })
+                            res.json({
+                                file: data,
+                                path: detail_path
+                            })
                         }
                     })
-                }
-                else {
+                } else {
                     res.statusCode = 400;
-                    res.json({ msg: `path:${detail_path} not found` });
+                    res.json({
+                        msg: `path:${detail_path} not found`
+                    });
                 }
             })
         }
-    }
-    else {
+    } else {
         res.statusCode = 400;
-        res.json({ msg: `bad request, no slug ${req.params.slug}` })
+        res.json({
+            msg: `bad request, no slug ${req.params.slug}`
+        })
     }
 })
 
-function calc_path(req,pagetype,root_path){
+function calc_path(req, pagetype, root_path) {
     const prepend_len = `/static/${pagetype}/${req.params.slug}`.length
-        // reconstruct the detailed path
-        const tail_path = req.originalUrl.substring(prepend_len);
-        const detail_path = path.join(root_path,tail_path );
-        return {tail_path,detail_path,prepend_len};
+    // reconstruct the detailed path
+    const tail_path = req.originalUrl.substring(prepend_len);
+    const detail_path = path.join(root_path, tail_path);
+    return {
+        tail_path,
+        detail_path,
+        prepend_len
+    };
 }
 // return raw file content
-router.get("/dirraw/:slug/*", async (req,res) => {
-    obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
+router.get("/dirraw/:slug/*", async (req, res) => {
+    obj = await StaticLocation.findOne({
+        where: {
+            slug: req.params.slug
+        }
+    })
     if (obj) {
-        const {tail_path,detail_path,prepend_len} = calc_path(req,"dirraw",obj.root_path)
-        fs.exists(detail_path,result =>{
-            if(result){
-                fs.readFile(detail_path,"utf8",(err,data) =>{
-                    if (err) res.json({ msg: `can not read path:${detail_path}` });
+        const {
+            tail_path,
+            detail_path,
+            prepend_len
+        } = calc_path(req, "dirraw", obj.root_path)
+        fs.exists(detail_path, result => {
+            if (result) {
+                fs.readFile(detail_path, "utf8", (err, data) => {
+                    if (err) res.json({
+                        msg: `can not read path:${detail_path}`
+                    });
                     else {
                         res.send(data)
                     }
                 })
-            }
-            else{
-                res.json({ msg: `path:${detail_path} not found` });
+            } else {
+                res.json({
+                    msg: `path:${detail_path} not found`
+                });
             }
         })
     }
 })
 
 router.get("/dirpage/:slug/*", async (req, res) => {
-    obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
+    obj = await StaticLocation.findOne({
+        where: {
+            slug: req.params.slug
+        }
+    })
     if (obj) {
-        const {tail_path,detail_path,prepend_len} = calc_path(req,"dirpage",obj.root_path)
+        const {
+            tail_path,
+            detail_path,
+            prepend_len
+        } = calc_path(req, "dirpage", obj.root_path)
 
         // check absolute path
         if (!path.isAbsolute(detail_path)) {
             res.statusCode = 400;
-            res.json({ msg: `path:${detail_path} not correct` })
+            res.json({
+                msg: `path:${detail_path} not correct`
+            })
         } else {
             fs.exists(detail_path, result => {
                 if (result) {
@@ -142,31 +218,42 @@ router.get("/dirpage/:slug/*", async (req, res) => {
                             fs.readdir(detail_path, (err, data) => {
                                 if (err) {
                                     // if still error
-                                    res.json({ msg: `can not read file ${detail_path}` })
+                                    res.json({
+                                        msg: `can not read file ${detail_path}`
+                                    })
                                 }
                                 // list dir files
-                                const path = tail_path.slice(-1,)=="/"?tail_path.slice(0,-1):tail_path
-                                res.render("dirpage.html",{data:data,path:path,slug:req.params.slug})
+                                const path = tail_path.slice(-1, ) == "/" ? tail_path.slice(0, -1) : tail_path
+                                res.render("dirpage.html", {
+                                    data: data,
+                                    path: path,
+                                    slug: req.params.slug
+                                })
                             })
                         } else {
                             // return the file content string
-                            if(req.params.format == "raw") res.send(data)
-                            else{
-                            // return a page contains content
-                            const parent_path = tail_path.slice(0,Math.max(tail_path.lastIndexOf("/"),0)+1)
-                            res.render("content.html",{data:data,path:parent_path,slug:req.params.slug, full_path: tail_path})
+                            if (req.params.format == "raw") res.send(data)
+                            else {
+                                // return a page contains content
+                                const parent_path = tail_path.slice(0, Math.max(tail_path.lastIndexOf("/"), 0) + 1)
+                                res.render("content.html", {
+                                    data: data,
+                                    path: parent_path,
+                                    slug: req.params.slug,
+                                    full_path: tail_path
+                                })
                             }
                         }
                     })
-                }
-                else {
+                } else {
                     res.statusCode = 400;
-                    res.json({ msg: `path:${detail_path} not found` });
+                    res.json({
+                        msg: `path:${detail_path} not found`
+                    });
                 }
             })
         }
-    }
-    else {
+    } else {
         res.statusCode = 400;
         res.send(`bad request, no slug ${req.params.slug} found please go to /static/pagelist to mount new static volumn`)
     }
