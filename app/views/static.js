@@ -30,6 +30,12 @@ router.get("/list", async (req, res) => {
     res.json(obj)
 })
 
+// list all the static directories
+router.get("/listpage", async (req, res) => {
+    obj = await StaticLocation.findAll({})
+    res.render("static_list.html",{obj})
+})
+
 // add a new static directory
 router.post("/add", jsonParser, async (req, res) => {
     await StaticLocation.create(req.body)
@@ -116,7 +122,7 @@ router.get("/dirpage/:slug/*", async (req, res) => {
                             // return the file content string
                             const parent_path = tail_path.slice(0,Math.max(tail_path.lastIndexOf("/"),0)+1)
 
-                            res.render("content.html",{data:data,path:parent_path,slug:req.params.slug, full_path = tail_path})
+                            res.render("content.html",{data:data,path:parent_path,slug:req.params.slug, full_path: tail_path})
                         }
                     })
                 }

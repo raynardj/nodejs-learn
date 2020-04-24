@@ -1,0 +1,33 @@
+{%extends "base.html"%}
+{%block content%}
+<h2 class='text-primary mb-2'>Static Volumns</h2>
+
+<form action="" method="get">
+    <ul class="list-group">
+        <li class="list-group-item form-control-group">
+            <label>Volumn Name </label>
+            <input type="text" name="slug" class="form-control">
+        </li>
+        <li class="list-group-item form-control-group">
+            <label>Root Path </label>
+            <input type="text" name="root_path" placeholder="Local path" class="form-control">
+        </li>
+        <li class="list-group-item form-control-group">
+            <label>Markdown Documentation </label>
+            <textarea class="form-control"></textarea>
+        </li>
+        <li class="list-group-item">
+            <button class="btn btn-primary">
+                New Static
+            </button>
+        </li>
+    </ul>
+</form>
+<div>
+    <ul class="list-group">
+        {%for i in obj%}
+        {{i}}
+        {%endfor%}
+    </ul>
+</div>
+{%endblock%}
