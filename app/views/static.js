@@ -168,7 +168,7 @@ router.get("/dirpage/:slug/*", async (req, res) => {
     }
     else {
         res.statusCode = 400;
-        res.json({ msg: `bad request, no slug ${req.params.slug}` })
+        res.send(`bad request, no slug ${req.params.slug} found please go to /static/pagelist to mount new static volumn`)
     }
 })
 
