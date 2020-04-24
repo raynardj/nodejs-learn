@@ -1,7 +1,7 @@
 {%extends "base.html"%}
 {%block content%}
 <h2 class='text-primary mb-2'>Static Volumns</h2>
-
+<div class="mt-5">
 <form action="" method="get">
     <ul class="list-group">
         <li class="list-group-item form-control-group">
@@ -14,7 +14,7 @@
         </li>
         <li class="list-group-item form-control-group">
             <label>Markdown Documentation </label>
-            <textarea class="form-control"></textarea>
+            <input type="text" name="md_doc" placeholder="Markdown Documentation" class="form-control">
         </li>
         <li class="list-group-item">
             <button class="btn btn-primary">
@@ -23,11 +23,25 @@
         </li>
     </ul>
 </form>
-<div>
+</div>
+<div class="mt-5">
+    <h3 class="text-warning">Mounted Volumns</h3>
     <ul class="list-group">
         {%for i in obj%}
-        {{i}}
+        <li class="list-group-item">
+            <h4>{{i.slug}}</h4> 
+            <pre>{{i.root_path}}</pre>
+            <div class="btn-group">
+                <a href="/static/dirpage/{{i.slug}}/" class="btn btn-warning">Visit Folder</a>
+                <a href="/static/delete/{{i.slug}}" class="btn btn-danger">Delete</a>
+            </div>
+        </li>
         {%endfor%}
     </ul>
 </div>
 {%endblock%}
+
+{%block tail_js%}
+    <script></script>
+
+{%endblock %}

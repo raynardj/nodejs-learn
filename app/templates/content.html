@@ -5,12 +5,12 @@
     {{slug}}: path <span class="text-warning"><strong>{{path}}</strong></span>
 </h3>
 
-File Path:
 <pre><code>{{full_path}}</code></pre>
-
-<a class="btn btn-warning" href="/static/dirpage/{{slug}}{{path}}">Parent</a>
-<a class="btn btn-success" target="_blank" href="/static/dirraw/{{slug}}{{full_path}}">Raw Text</a>
-
+<div class="btn-group mt-3">
+    <a class="btn btn-warning btn-sm" href="/static/dirpage/{{slug}}{{path}}">Parent</a>
+    <a class="btn btn-info btn-sm" href="/static/dirpage/{{slug}}/">Root Folder</a>
+    <a class="btn btn-success btn-sm" target="_blank" href="/static/dirraw/{{slug}}{{full_path}}">Raw Text</a>
+</div>
 <hr>
 
 <pre>

@@ -6,8 +6,8 @@
 
 <h4>Root Path</h4>
 <pre><code>{{data.root_path}}</code></pre>
-
-<a href='/static/dir/{{data.slug}}/' class="btn btn-primary">directory API</a>
-<a href='/static/dirpage/{{data.slug}}/' class="btn btn-success">View Directory</a>
-
+<div class="btn-group">
+    <a href='/static/dir/{{data.slug}}/' class="btn btn-primary btn-sm">directory API</a>
+    <a href='/static/dirpage/{{data.slug}}/' class="btn btn-success btn-sm">Root Folder</a>
+</div>
 {%endblock%}

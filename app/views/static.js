@@ -32,6 +32,10 @@ router.get("/list", async (req, res) => {
 
 // list all the static directories
 router.get("/listpage", async (req, res) => {
+    const {slug,root_path,md_doc} = req.query
+    if(slug&& root_path) {
+        StaticLocation.create({slug,root_path,md_doc});
+    }
     obj = await StaticLocation.findAll({})
     res.render("static_list.html",{obj})
 })
@@ -42,11 +46,12 @@ router.post("/add", jsonParser, async (req, res) => {
     res.json({ data: req.body, msg: "Add success" })
 })
 // delete
-router.delete("/delete/:slug", async (req, res) => {
+router.get("/delete/:slug", async (req, res) => {
     const obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
     obj.destroy()
+    res.redirect("/static/listpage")
 })
-
+// static api
 router.get("/dir/:slug/*", async (req, res) => {
     obj = await StaticLocation.findOne({ where: { slug: req.params.slug } })
     if (obj) {

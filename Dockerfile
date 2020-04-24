@@ -1,6 +1,6 @@
 FROM node:latest
 ADD app/ /root
-WORKDIR /root/app
+WORKDIR /root
 RUN npm install -g nodemon
 RUN npm install --save sequelize
 RUN npm install --save sqlite3

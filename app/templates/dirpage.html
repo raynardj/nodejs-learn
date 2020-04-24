@@ -4,11 +4,19 @@
 <h2 class="mb-5">
     Folder <span class="text-primary">{{path}}</span>
 </h2>
-<ul class="list-group">
-    {%for i in data%}
+<div>
+    <div class="btn-group">
+        <a href="/static/dirpage/{{slug}}/" class="btn btn-success btn-sm">Root Folder </a>
+        <a href="/static/listpage" class="btn btn-primary btn-sm">Other Volumns</a>
+    </div>
+</div>
+<div class="mt-5">
+    <ul class="list-group">
+        {%for i in data%}
         <li class="list-group-item">
             <a href="/static/dirpage/{{slug}}{{path}}/{{i}}">{{i}}</a>
         </li>
-    {%endfor%}
-</ul>
+        {%endfor%}
+    </ul>
+</div>
 {%endblock%}
