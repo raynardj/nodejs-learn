@@ -1,6 +1,9 @@
 {%extends "base.html"%}
 {%block content%}
-<h2 class='text-primary mb-2'>Static Volumns</h2>
+{% from  "nav_bar.html" import nb as nb%}
+{{nb()}}
+<h2 class='text-primary mt-1'>Static Volumns</h2>
+
 <!-- A form to mount static module  -->
 <div class="mt-5">
     <form action="" method="get">

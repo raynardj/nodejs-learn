@@ -1,7 +1,7 @@
 const {Sequelize,Model,DataTypes} = require('sequelize');
 
 const sequelize = new Sequelize({dialect:"sqlite",storage:"app.db"},);
-
+const bcrypt = require('bcrypt');
 // Data base links
 class DBs extends Model{
     static add_db(obj){
@@ -45,6 +45,25 @@ StaticLocation.init({
     md_doc:{type:DataTypes.TEXT,allowNull:true}
 }, {sequelize, modelName:"static_location"})
 
+class User extends Model{
+    static hash_str = (s)=>{
+        var hashed
+        bcrypt.hash(s,10,(err,hash)=>{
+            console.log(hash);
+            if(err)console.log(`hash failed:${err}`)
+            else if(hash) hashed = hash;
+        })
+        console.log(hashed)
+        return hashed
+    }
+}
+User.init({
+    id:{type:DataTypes.INTEGER, autoIncrement:true,primaryKey:true},
+    username:{type:DataTypes.TEXT, allowNull:false},
+    password:{type:DataTypes.TEXT,allowNull:false}
+},{sequelize, modelName:"user"})
+
+User.hash_str("hello my friend")
 sequelize.sync();
 DBs.sync();
 SqlApi.sync();

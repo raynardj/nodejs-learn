@@ -7,6 +7,9 @@ const nunjucks = require('nunjucks');
 // models
 const {sequelize,DBs,SqlApi} = require("./models");
 
+// middlewares
+const logger = require("./middlewares/logger")
+
 // views
 const db_router = require('./views/db');
 const static_router = require('./views/static');
@@ -19,15 +22,12 @@ nunjucks.configure('templates', {
     autoescape: true,
     express: app
 });
-
+app.use(logger)
 app.use("/db",db_router)
 app.use("/static",static_router)
-
 app.get("/", (req,res)=>{
-    console.log("Loading main page");
     res.render("index.html");
 })
-
 app.get("/api/:slug",async (req,res)=>{
     const {slug} = req.params;
     const api_obj = await SqlApi.findOne({where:{slug:slug}});
