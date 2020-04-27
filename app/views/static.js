@@ -113,15 +113,10 @@ router.get("/dir/:slug/*", async (req, res) => {
                             fs.readdir(detail_path, (err, data) => {
                                 if (err) {
                                     // if still error
-                                    res.json({
-                                        msg: `can not read file ${detail_path}`
-                                    })
+                                    res.json({msg: `can not read file ${detail_path}`})
                                 }
                                 // list dir files
-                                res.json({
-                                    dir: data,
-                                    pwd: detail_path,
-                                })
+                                res.json({dir: data,pwd: detail_path,})
                             })
                         } else {
                             // return the file content string
