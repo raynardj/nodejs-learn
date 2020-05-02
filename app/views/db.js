@@ -45,10 +45,10 @@ router.get("/listpage", async (req, res) => {
     })
 })
 
-router.get("/delete/:name", async (req, res) => {
+router.get("/delete/:id", async (req, res) => {
     const obj = await DBs.findOne({
         where: {
-            name: req.params.name
+            id: parseInt(req.params.id)
         }
     })
     obj.destroy()
@@ -57,8 +57,13 @@ router.get("/delete/:name", async (req, res) => {
 
 var jsonParser = bodyParser.json()
 router.post('/add', jsonParser, (req, res) => {
+    if(req.body.name==null){
+        res.statusCode = 400;
+        res.json({msg:`No name set`});
+    }
+    console.log("Adding new database>>")
     console.log(req.body);
-    DBs.create(req.body)
+    DBs.create(req.body);
     res.json(req.body);
 })
 module.exports = router
