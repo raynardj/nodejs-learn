@@ -2,45 +2,45 @@ const express = require('express')
 const router = express.Router()
 const bodyParser = require('body-parser')
 const {
-    DBs
+    SqlApi
 } = require("../models")
 
 router.get('/show/:id', async (req, res) => {
-    const db = await DBs.findOne({
+    const api = await SqlApi.findOne({
         where: {
             id: req.params.id
         }
     })
-    res.json(db)
+    res.json(api)
 })
 router.get('/list', (req, res) => {
-    DBs.findAll({
+    SqlApi.findAll({
             where: {}
         })
-        .then(dbs => res.json(dbs))
+        .then(apis => res.json(apis))
 })
 
 router.get("/listpage", async (req, res) => {
     const {
-        name,
-        database,
-        dialect,
-        username,
-        password,
-        md_doc,
-        host,
-        port
+        slug,
+        db_id,
+        sql,
+        is_temp,
+        md_doc
     } = req.query
-    if (name && database&&dialect)
+    if (slug && sql&&db_id)
     {
-        console.log(`Creating db connection ${name} ${dialect} ${database}`)
-        DBs.create({
-            name,database,dialect,username,password,md_doc,host,port
+        console.log(`Creating db connection ${slug} ${sql} ${db_id}`)
+        SqlApi.create({
+            slug, db_id,sql,is_temp,md_doc
         })
+    }else{
+        res.statusCode = 400;
+        res.json({msg:`missing colume, data ${req.query}`})
     }
-    const dbs = await DBs.findAll({})
-    res.render("db_list.html", {
-        dbs
+    const apis = await SqlApi.findAll({})
+    res.render("api_list.html", {
+        apis
     })
 })
 
@@ -51,18 +51,13 @@ router.get("/delete/:id", async (req, res) => {
         }
     })
     obj.destroy()
-    res.redirect("/db/listpage")
+    res.redirect("/sqlapi/listpage")
 })
 
 var jsonParser = bodyParser.json()
 router.post('/add', jsonParser, (req, res) => {
-    if(req.body.name==null){
-        res.statusCode = 400;
-        res.json({msg:`No name set`});
-    }
-    console.log("Adding new database>>")
     console.log(req.body);
-    DBs.create(req.body);
+    SqlApi.create(req.body);
     res.json(req.body);
 })
 module.exports = router

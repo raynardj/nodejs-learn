@@ -12,6 +12,7 @@ const logger = require("./middlewares/logger")
 
 // views
 const db_router = require('./views/db');
+const sqlapi_router = require('./views/sqlapi');
 const static_router = require('./views/static');
 
 const hostname  = "0.0.0.0";
@@ -25,6 +26,7 @@ nunjucks.configure('templates', {
 app.use(logger)
 app.use("/db",db_router)
 app.use("/static",static_router)
+app.use("/sqlapi",sqlapi_router)
 app.get("/", (req,res)=>{
     res.render("index.html");
 })
