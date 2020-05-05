@@ -41,6 +41,7 @@ router.get("/listpage", async(req, res) => {
     let [apis, dbs] = await Promise.all([
         SqlApi.findAll({}),
         DBs.findAll({}),]);
+    
     res.render("api_list.html", {
         apis,
         dbs

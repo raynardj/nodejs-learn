@@ -29,13 +29,17 @@ SqlApi.init({
         type:DataTypes.INTEGER,
         references:{
             model:DBs,
-            key:DBs.id,
+            key:'id',
         }
     },
     sql:{type:DataTypes.TEXT},
     is_temp:{type:DataTypes.BOOLEAN},
     md_doc:{type:DataTypes.TEXT,allowNull:true}
 },{sequelize,modelName:"sqlapi"})
+
+SqlApi.db = DBs.hasOne(SqlApi,{
+    foreignKey:{name:"db_id"}})
+// SqlApi.belongsToMany(DBs)
 
 // Static directory root locations
 class StaticLocation extends Model{}
