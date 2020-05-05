@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const bodyParser = require('body-parser')
 const {
-    SqlApi
+    SqlApi,DBs
 } = require("../models")
 
 router.get('/show/:id', async (req, res) => {
@@ -20,28 +20,31 @@ router.get('/list', (req, res) => {
         .then(apis => res.json(apis))
 })
 
-router.get("/listpage", async (req, res) => {
+router.get("/listpage", async(req, res) => {
     const {
         slug,
         db_id,
         sql,
         is_temp,
         md_doc
-    } = req.query
-    if (slug && sql&&db_id)
-    {
-        console.log(`Creating db connection ${slug} ${sql} ${db_id}`)
+    } = req.query;
+    if (slug && sql && db_id) {
+        console.log(`Creating db connection ${slug} ${sql} ${db_id}`);
         SqlApi.create({
-            slug, db_id,sql,is_temp,md_doc
-        })
-    }else{
-        res.statusCode = 400;
-        res.json({msg:`missing colume, data ${req.query}`})
+            slug,
+            db_id,
+            sql,
+            is_temp,
+            md_doc
+        });
     }
-    const apis = await SqlApi.findAll({})
+    let [apis, dbs] = await Promise.all([
+        SqlApi.findAll({}),
+        DBs.findAll({}),]);
     res.render("api_list.html", {
-        apis
-    })
+        apis,
+        dbs
+    });
 })
 
 router.get("/delete/:id", async (req, res) => {
