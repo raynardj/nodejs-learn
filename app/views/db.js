@@ -13,6 +13,21 @@ router.get('/show/:id', async (req, res) => {
     })
     res.json(db)
 })
+router.get('/view/:id', async (req, res) => {
+    DBs.findOne({
+        where: {
+            id: req.params.id
+        }
+    })
+    .then((db)=>{
+        res.render("db_view.html",{db})
+    })
+    .catch((err)=>{
+        res.statusCode=400;
+        res.json({error:`Database ID error`,input_param:req.params})
+    })
+})
+
 router.get('/list', (req, res) => {
     DBs.findAll({
             where: {}

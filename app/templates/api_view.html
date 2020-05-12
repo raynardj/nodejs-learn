@@ -1,0 +1,21 @@
+{% extends "base.html"%}
+
+{%block content%}
+
+<h2>API <span class = "text-warning">{{api.slug}}</span></h2>
+
+<hr>
+
+<div class="row mt-4">
+    <div class="col-sm-5">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <strong>Database</strong> {{db.name}}  <a href="/db/view/{{db.id}}" class="btn btn-success btn-sm">View</a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-sm-9">
+
+    </div>
+</div>
+{%endblock%}

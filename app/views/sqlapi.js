@@ -20,6 +20,36 @@ router.get('/list', (req, res) => {
         .then(apis => res.json(apis))
 })
 
+router.get("/viewapi/:slug",async(req,res)=>{
+    const slug = req.params.slug;
+    const api = await SqlApi.findOne({where:{slug}});
+    res.json(api)
+})
+
+router.get("/view/:slug",async(req,res)=>{
+    const slug = req.params.slug;
+    SqlApi.findOne({where:{slug}})
+        .then((result)=>{
+            let api = result.get()
+            return api
+        })
+        .catch((err)=>{
+            res.statusCode = 400
+            res.json({error:`api name ${slug} not found`})
+        })
+        .then((api)=>{
+            DBs.findOne({where:{id:api.db_id}})
+            .then((db)=>{
+                res.render("api_view.html",{api,db})
+            })
+            .catch((err)=>{
+                res.statusCode = 400;
+                res.json({error:`Database ${api.db_id} not found`})
+            })
+        })
+    
+})
+
 router.get("/listpage", async(req, res) => {
     const {
         slug,
