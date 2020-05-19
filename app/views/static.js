@@ -113,10 +113,10 @@ router.get("/dir/:slug/*", async (req, res) => {
                             fs.readdir(detail_path, (err, data) => {
                                 if (err) {
                                     // if still error
-                                    res.json({msg: `can not read file ${detail_path}`})
+                                    res.json({ msg: `can not read file ${detail_path}` })
                                 }
                                 // list dir files
-                                res.json({dir: data,pwd: detail_path,})
+                                res.json({ dir: data, pwd: detail_path, })
                             })
                         } else {
                             // return the file content string
@@ -142,7 +142,7 @@ router.get("/dir/:slug/*", async (req, res) => {
     }
 })
 
-function calc_path(req, pagetype, root_path) {
+const calc_path = (req, pagetype, root_path)=>{
     const prepend_len = `/static/${pagetype}/${req.params.slug}`.length
     // reconstruct the detailed path
     const tail_path = req.originalUrl.substring(prepend_len);
@@ -153,8 +153,21 @@ function calc_path(req, pagetype, root_path) {
         prepend_len
     };
 }
+
+const calc_file_path = (req, pagetype,how, root_path)=>{
+    const prepend_len = `/static/${pagetype}/${how}/${req.params.slug}`.length
+    // reconstruct the detailed path
+    const tail_path = req.originalUrl.substring(prepend_len);
+    const detail_path = path.join(root_path, tail_path);
+    return {
+        tail_path,
+        detail_path,
+        prepend_len
+    };
+}
 // return raw file content
-router.get("/dirraw/:slug/*", async (req, res) => {
+router.get("/dirfile/:how/:slug/*", async (req, res) => {
+    const how = req.params.how
     obj = await StaticLocation.findOne({
         where: {
             slug: req.params.slug
@@ -165,17 +178,21 @@ router.get("/dirraw/:slug/*", async (req, res) => {
             tail_path,
             detail_path,
             prepend_len
-        } = calc_path(req, "dirraw", obj.root_path)
+        } = calc_file_path(req, "dirfile",how, obj.root_path)
         fs.exists(detail_path, result => {
             if (result) {
-                fs.readFile(detail_path, "utf8", (err, data) => {
-                    if (err) res.json({
-                        msg: `can not read path:${detail_path}`
-                    });
-                    else {
-                        res.send(data)
-                    }
-                })
+                if (how == "raw") {
+                    fs.readFile(detail_path, "utf8", (err, data) => {
+                        if (err) res.json({
+                            msg: `can not read path:${detail_path}`
+                        });
+                        else {
+                            res.send(data)
+                        }
+                    })
+                }else if(how=="download"){
+                    res.sendFile(detail_path)
+                }
             } else {
                 res.json({
                     msg: `path:${detail_path} not found`
@@ -218,7 +235,8 @@ router.get("/dirpage/:slug/*", async (req, res) => {
                                     })
                                 }
                                 // list dir files
-                                const path = tail_path.slice(-1, ) == "/" ? tail_path.slice(0, -1) : tail_path
+                                
+                                const path = tail_path.slice(-1) == "/" ? tail_path.slice(0, -1) : tail_path
                                 res.render("dirpage.html", {
                                     data: data,
                                     path: path,
