@@ -107,3 +107,4 @@ app/app.db
 .bash_history
 .config/configstore/update-notifier-npm.json
 app/package-lock.json
+.config/configstore/update-notifier-nodemon.json
