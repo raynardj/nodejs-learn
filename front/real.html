@@ -1,3 +1,72 @@
-<script>
-    alert(123)
-</script>
+<!DOCTYPE html>
+
+<head>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+    </script>
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-10">
+
+
+            <h2 class='mt-5'>
+                上海买二手房 etc
+            </h2>
+
+            <div class='mt-5 row'>
+                <div class="col-sm-6">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <label for="price">总价(万)</label>
+                            <input name='price' type="text" class='form-control'>
+                        </li>
+                        <li class="list-group-item">
+                            <label for="location">位置</label>
+                            <select name="location" id="location" class='form-control'>
+                                <option value="0">内环</option>
+                                <option value="1">中环</option>
+                                <option value="2">外环</option>
+                                <option value="3">外环+</option>
+                            </select>
+                        </li>
+                        <li class="list-group-item">
+                            <label for="five">满五唯一</label>
+                            <select name="five" id="five" class='form-control'>
+                                <option value="0">不满五年</option>
+                                <option value="1">满五不唯一</option>
+                                <option value="1">满五唯一</option>
+                            </select>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-6">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <label for="downpay">首付</label>
+                            <input name='downpay' type="downpay" class='form-control'>
+                        </li>
+                        <li class="list-group-item">
+                            <label for="gov_loan">公积金贷款 (万)</label>
+                            <input name='gov_loan' type="text" placeholder="100"
+                             default=100 class='form-control'>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1"></div>
+    </div>
+</body>
