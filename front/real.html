@@ -26,47 +26,69 @@
                 上海买二手房 etc
             </h2>
 
-            <div class='mt-5 row'>
-                <div class="col-bg-6">
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <label for="price">总价(万)</label>
-                            <input name='price' type="text" class='form-control'>
-                        </li>
-                        <li class="list-group-item">
-                            <label for="location">位置</label>
-                            <select name="location" id="location" class='form-control'>
-                                <option value="0">内环</option>
-                                <option value="1">中环</option>
-                                <option value="2">外环</option>
-                                <option value="3">外环+</option>
-                            </select>
-                        </li>
-                        <li class="list-group-item">
-                            <label for="five">满五唯一</label>
-                            <select name="five" id="five" class='form-control'>
-                                <option value="0">不满五年</option>
-                                <option value="1">满五不唯一</option>
-                                <option value="1">满五唯一</option>
-                            </select>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-bg-6">
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <label for="downpay">首付</label>
-                            <input name='downpay' type="downpay" class='form-control'>
-                        </li>
-                        <li class="list-group-item">
-                            <label for="gov_loan">公积金贷款 (万)</label>
-                            <input name='gov_loan' type="text" placeholder="100"
-                             default=100 class='form-control'>
-                        </li>
-                    </ul>
-                </div>
+            <div class='mt-5'>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <label for="price">总价(万)</label>
+                        <input name='price' id="price" type="text" class='form-control'>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="location">位置</label>
+                        <select name="location" id="location" class='form-control'>
+                            <option value="0">内环</option>
+                            <option value="1">中环</option>
+                            <option value="2">外环</option>
+                            <option value="3">外环+</option>
+                        </select>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="five">满五唯一</label>
+                        <select name="five" id="five" class='form-control'>
+                            <option value="0">不满五年</option>
+                            <option value="1">满五不唯一</option>
+                            <option value="1">满五唯一</option>
+                        </select>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>贷款</h5>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="downpay">首付</label>
+                        <input name='downpay' id='downpay' type="text" class='form-control'>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="gov_loan">公积金贷款 (万)</label>
+                        <input name='gov_loan' type="text" placeholder="100" default=100 class='form-control'>
+                    </li>
+                    <li class="list-group-item">
+                        <h5>
+                            税费
+                        </h5>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="deedtax">契税</label>
+                        <input type="text" name="deedtax" id="deedtax" class="form-control">
+                    </li>
+                </ul>
             </div>
         </div>
         <div class="col-sm-1"></div>
     </div>
 </body>
+<script>
+    $(document).ready(function(){
+        const update_downpay = (price)=>{
+            var downpay = price*0.35
+            $("#downpay").val(downpay)
+        }
+        const update_deedtax = (price)=>{
+            var deedtax = price*0.01
+            $("#deedtax").val(deedtax)
+        }
+        $("#price").change(function(){
+            var price = parseInt($(this).val())
+            update_downpay(price)
+            update_deedtax(price)
+        })
+    })
+</script>
