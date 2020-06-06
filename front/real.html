@@ -14,6 +14,12 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
     </script>
+    <style>
+        body,.form-control
+        {
+            font-size: 25px;
+        }
+    </style>
 </head>
 
 <body>
@@ -33,6 +39,11 @@
                         <input name='price' id="price" type="text" class='form-control'>
                     </li>
                     <li class="list-group-item">
+                        <label for="price_last">卖方买入价</label>
+                        <input name='price_last' id="price_last" value=0 
+                        type="text" placeholder=0 class='form-control'>
+                    </li>
+                    <li class="list-group-item">
                         <label for="markprice">做差价(万) 可以负数</label>
                         <input name='markprice' id="markprice" value=0 
                         type="text" placeholder=0 class='form-control'>
@@ -50,11 +61,7 @@
                             <option value="oridi">普通住宅</option>
                         </select>
                     </li>
-                    <li class="list-group-item">
-                        <label for="price_last">卖方买入价</label>
-                        <input name='price_last' id="price_last" value=0 
-                        type="text" placeholder=0 class='form-control'>
-                    </li>
+                    
                     <li class="list-group-item">
                         <label for="years">年份</label>
                         <select name="years" id="years" class='form-control'>
@@ -87,9 +94,18 @@
                         </h5>
                     </li>
                     <li class="list-group-item">
+                        <label for="vat">增值税</label>
+                        <input type="text" name="vat" id="vat" class="form-control">
+                    </li>
+                    <li class="list-group-item">
+                        <label for="pit">个税</label>
+                        <input type="text" name="pit" id="pit" class="form-control">
+                    </li>
+                    <li class="list-group-item">
                         <label for="deedtax">契税</label>
                         <input type="text" name="deedtax" id="deedtax" class="form-control">
                     </li>
+                    
                 </ul>
             </div>
         </div>
@@ -103,9 +119,11 @@
             var downpay = price*0.35
             $("#downpay").val(downpay)
         }
-        const update_deedtax = (price)=>{
-            var deedtax = price*0.01
+        const calc_deedtax = (data)=>{
+            const {price2} = data
+            var deedtax = price2*0.01
             $("#deedtax").val(deedtax)
+            return deedtax
         }
 
         const update_data = ()=>{
@@ -143,20 +161,40 @@
             }
         }
 
-        const calc_PIT = (data,vat)=>{
+        const calc_PIT = (data)=>{
             // personal income tax
-            const {only} = data
+            const {only,price2,price_last,isordi} = data
             if (only ==1){
                 return 0
+            }else{
+                const pit_rate = (isordi==1)?0.01:0.02;
+                var t1 = (price2)*pit_rate;
+                var t2 = (price2-price_last)*0.2
+                return t1>t2?t2:t1
             }
         }
 
         const update_all = ()=>{
-            const {price2} = update_data()
-            update_downpay(price2)
-            update_deedtax(price2)
+            const data = update_data()
+            
+            update_downpay(data.price2)
+            const deedtax = calc_deedtax(data)
+            const vat = calc_vat(data)
+            const pit = calc_PIT(data,vat)
+
+            $("#vat").val(vat)
+            $("#pit").val(pit)
+            console.log({vat,pit,deedtax})
         }
-        $("#price").change(update_all)
-        $("#markprice").change(update_all)
+        const change_assign = (id_)=>{
+            $(`#${id_}`).change(update_all)
+        }
+        change_assign("markprice");
+        change_assign("price");
+        change_assign("price_last")
+        change_assign("isordi")
+        change_assign("realtype")
+        change_assign("years")
+        change_assign("only")
     })
 </script>
