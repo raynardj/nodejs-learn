@@ -23,7 +23,7 @@
 
 
             <h2 class='mt-5'>
-                上海买二手房 etc
+                上海买🧤二手房 etc
             </h2>
 
             <div class='mt-5'>
@@ -33,20 +33,41 @@
                         <input name='price' id="price" type="text" class='form-control'>
                     </li>
                     <li class="list-group-item">
-                        <label for="location">位置</label>
-                        <select name="location" id="location" class='form-control'>
-                            <option value="0">内环</option>
-                            <option value="1">中环</option>
-                            <option value="2">外环</option>
-                            <option value="3">外环+</option>
+                        <label for="markprice">做差价(万) 可以负数</label>
+                        <input name='markprice' id="markprice" value=0 
+                        type="text" placeholder=0 class='form-control'>
+                    </li>
+                    
+                    <li class="list-group-item">
+                        <label for="price2">做价(万) 合同价</label>
+                        <input name='price2' id="price2" value=0 
+                        type="text" placeholder=0 class='form-control' readonly>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="realtype">住宅类型</label>
+                        <select name="realtype" id="realtype" class='form-control'>
+                            <option value="extraordi">非普通住宅</option>
+                            <option value="oridi">普通住宅</option>
                         </select>
                     </li>
                     <li class="list-group-item">
-                        <label for="five">满五唯一</label>
-                        <select name="five" id="five" class='form-control'>
-                            <option value="0">不满五年</option>
-                            <option value="1">满五不唯一</option>
-                            <option value="1">满五唯一</option>
+                        <label for="price_last">卖方买入价</label>
+                        <input name='price_last' id="price_last" value=0 
+                        type="text" placeholder=0 class='form-control'>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="years">年份</label>
+                        <select name="years" id="years" class='form-control'>
+                            <option value="0">2 年不到</option>
+                            <option value="1">2-5 年</option>
+                            <option value="2">5 年以上</option>
+                        </select>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="only">产权人家庭唯一</label>
+                        <select name="only" id="only" class='form-control'>
+                            <option value=0>不唯一</option>
+                            <option value=1>唯一</option>
                         </select>
                     </li>
                     <li class="list-group-item">
@@ -77,6 +98,7 @@
 </body>
 <script>
     $(document).ready(function(){
+
         const update_downpay = (price)=>{
             var downpay = price*0.35
             $("#downpay").val(downpay)
@@ -85,10 +107,56 @@
             var deedtax = price*0.01
             $("#deedtax").val(deedtax)
         }
-        $("#price").change(function(){
-            var price = parseInt($(this).val())
-            update_downpay(price)
-            update_deedtax(price)
-        })
+
+        const update_data = ()=>{
+            var price = parseInt($("#price").val())
+            var markprice = parseInt($("#markprice").val())
+            var isordi = $("#realtype")[0].selectedIndex
+            var years = $('#years')[0].selectedIndex
+            var price_last = $('#price_last').val()
+            
+            console.log({price,markprice,isordi})
+            $("#price2").val(price+markprice)
+            price2 = price+markprice
+            return {price2,isordi,markprice,years,price_last}
+        }
+
+        const va_t = (va)=>{
+            return (va/1.05)*0.056
+        }
+
+        const calc_vat = (data)=>{
+            const {isordi,years,price2,price_last} = data
+            if(isordi==1){ // ordinary
+                if(years==0){// less than 2 years
+                    return va_t(price2)
+                }
+                else{
+                    return 0
+                }
+            }else{// not ordinary
+                if(years==0){// less than 2 years
+                    return va_t(price2)
+                }else{ // mroe than 2 years
+                    return va_t(price2-price_last)
+                }
+            }
+        }
+
+        const calc_PIT = (data,vat)=>{
+            // personal income tax
+            const {only} = data
+            if (only ==1){
+                return 0
+            }
+        }
+
+        const update_all = ()=>{
+            const {price2} = update_data()
+            update_downpay(price2)
+            update_deedtax(price2)
+        }
+        $("#price").change(update_all)
+        $("#markprice").change(update_all)
     })
 </script>
