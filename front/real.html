@@ -221,12 +221,12 @@
 
         const calc_rate = (data)=>{
             const {price2,gov_loan,gov_rate,com_rate} = data
-            if(price2>gov_loan){
+            if(price2*0.65>gov_loan){
                 var gov_amt = gov_loan;
-                var com_amt = price2-gov_amt;
+                var com_amt = price2*0.65-gov_amt;
             }
             else{
-                var gov_amt = price2
+                var gov_amt = price2*0.65
                 var com_amt = 0
             }
             gov = calc_compound(gov_amt,gov_rate,20)
