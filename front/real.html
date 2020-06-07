@@ -98,13 +98,18 @@
                         placeholder="100" value=100 class='form-control'>
                     </li>
                     <li class="list-group-item">
+                        <label for="com_loan">商业贷款 (万)</label>
+                        <input id='com_loan' name='com_loan' type="text" 
+                        placeholder="100" value=100 class='form-control' readonly>
+                    </li>
+                    <li class="list-group-item">
                         <label for="gov_rate">公积金贷款利率 (%)</label>
                         <input id='gov_rate' name='gov_rate' type="text" 
                         value=3.25
                         placeholder="100" default=100 class='form-control'>
                     </li>
                     <li class="list-group-item">
-                        <label for="com_rate">商业金贷款利率 (%)</label>
+                        <label for="com_rate">商业贷款利率 (%)</label>
                         <input id='com_rate' name='com_rate' type="text" 
                         value=4.9
                         placeholder="100" default=100 class='form-control'>
@@ -224,10 +229,12 @@
             if(price2*0.65>gov_loan){
                 var gov_amt = gov_loan;
                 var com_amt = price2*0.65-gov_amt;
+                $("#com_loan").val(com_amt.toFixed(2))
             }
             else{
                 var gov_amt = price2*0.65
                 var com_amt = 0
+                $("#com_loan").val(com_amt.toFixed(2))
             }
             gov = calc_compound(gov_amt,gov_rate,20)
             com = calc_compound(com_amt,com_rate,20)
