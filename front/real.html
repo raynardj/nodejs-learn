@@ -21,7 +21,7 @@
         }
         body,.form-control,label,h4
         {
-            font-size: 50px;
+            font-size: 40px;
         }
     </style>
 </head>
@@ -82,11 +82,15 @@
                         </select>
                     </li>
                     <li class="list-group-item">
-                        <h5>贷款</h5>
+                        <h4>贷款</h4>
                     </li>
                     <li class="list-group-item">
-                        <label for="downpay">首付</label>
+                        <label for="downpay">首付（万）</label>
                         <input name='downpay' id='downpay' type="text" class='form-control'>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="downpay_cash">首付实际现金（万，做价后）</label>
+                        <input name='downpay_cash' id='downpay_cash' type="text" class='form-control' readonly>
                     </li>
                     <li class="list-group-item">
                         <label for="gov_loan">公积金贷款 (万)</label>
@@ -253,6 +257,11 @@
             `
             $("#loan_detail").html(content)
         }
+        const update_dpcash = ()=>{
+            var downpay = parseFloat($("#downpay").val())
+            var markprice = parseFloat($("#markprice").val())
+            $("#downpay_cash").val((downpay-markprice).toFixed(2))
+        }
 
         const update_all = ()=>{
             const data = update_data()
@@ -264,6 +273,7 @@
 
             const loans = calc_rate(data)
             show_loan(loans)
+            update_dpcash()
 
             $("#vat").val(vat)
             $("#pit").val(pit)
