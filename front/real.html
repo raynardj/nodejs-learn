@@ -15,9 +15,13 @@
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
     </script>
     <style>
-        body,.form-control
+        h2
         {
-            font-size: 25px;
+            font-size: 60px;
+        }
+        body,.form-control,label,h4
+        {
+            font-size: 50px;
         }
     </style>
 </head>
@@ -29,7 +33,7 @@
 
 
             <h2 class='mt-5'>
-                上海买🧤二手房 etc
+                上海买🧤二手房
             </h2>
 
             <div class='mt-5'>
@@ -86,12 +90,25 @@
                     </li>
                     <li class="list-group-item">
                         <label for="gov_loan">公积金贷款 (万)</label>
-                        <input name='gov_loan' type="text" placeholder="100" default=100 class='form-control'>
+                        <input id='gov_loan' name='gov_loan' type="text" 
+                        placeholder="100" value=100 class='form-control'>
                     </li>
                     <li class="list-group-item">
-                        <h5>
+                        <label for="gov_rate">公积金贷款利率 (%)</label>
+                        <input id='gov_rate' name='gov_rate' type="text" 
+                        value=3.25
+                        placeholder="100" default=100 class='form-control'>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="com_rate">商业金贷款利率 (%)</label>
+                        <input id='com_rate' name='com_rate' type="text" 
+                        value=4.9
+                        placeholder="100" default=100 class='form-control'>
+                    </li>
+                    <li class="list-group-item">
+                        <h4>
                             税费
-                        </h5>
+                        </h4>
                     </li>
                     <li class="list-group-item">
                         <label for="vat">增值税</label>
@@ -105,7 +122,14 @@
                         <label for="deedtax">契税</label>
                         <input type="text" name="deedtax" id="deedtax" class="form-control">
                     </li>
-                    
+                    <li class="list-group-item">
+                        <h4>
+                            贷款
+                        </h4>
+                    </li>
+                    <li class="list-group-item" id='loan_detail'>
+                        
+                    </li>
                 </ul>
             </div>
         </div>
@@ -132,11 +156,15 @@
             var isordi = $("#realtype")[0].selectedIndex
             var years = $('#years')[0].selectedIndex
             var price_last = $('#price_last').val()
+            var gov_loan = $('#gov_loan').val()
+            var gov_rate = $('#gov_rate').val()/100
+            var com_rate = $('#com_rate').val()/100
             
             console.log({price,markprice,isordi})
             $("#price2").val(price+markprice)
             price2 = price+markprice
-            return {price2,isordi,markprice,years,price_last}
+            return {price2,isordi,markprice,years,price_last,
+                gov_loan,gov_rate,com_rate}
         }
 
         const va_t = (va)=>{
@@ -174,6 +202,58 @@
             }
         }
 
+        
+        const calc_compound = (borrow,I,year)=>{
+            var amt = borrow
+            var i  = I/12
+            //var I= i * 12;
+            var n = year * 12;
+            var compound = Math.pow(1+i,n)
+            monthly = (borrow*i*compound)/(compound-1)
+            totalpay = (borrow*n*i*compound)/(compound-1)
+            total_i = totalpay-borrow
+            return {monthly,totalpay,total_i}
+        }
+
+        const calc_rate = (data)=>{
+            const {price2,gov_loan,gov_rate,com_rate} = data
+            if(price2>gov_loan){
+                var gov_amt = gov_loan;
+                var com_amt = price2-gov_amt;
+            }
+            else{
+                var gov_amt = price2
+                var com_amt = 0
+            }
+            gov = calc_compound(gov_amt,gov_rate,20)
+            com = calc_compound(com_amt,com_rate,20)
+            console.log({gov,com})
+            return {gov,com}
+        }
+        const show_loan = (data)=>{
+
+            var content = `
+            <ul class = 'list-group'>
+                <li class='list-group-item'>
+                月还款:${data.gov.monthly.toFixed(3)}(公积金)
+                + ${data.com.monthly.toFixed(3)}(商业)
+                = ${(data.gov.monthly+data.com.monthly).toFixed(3)}
+                </li>
+                <li class='list-group-item'>
+                    总利息:${data.gov.total_i.toFixed(3)}(公积金)
+                    + ${data.com.total_i.toFixed(3)}(商业)
+                    = ${(data.gov.total_i+data.com.total_i).toFixed(3)}
+                </li>
+                <li class='list-group-item'>
+                    总还款:${data.gov.totalpay.toFixed(3)}(公积金)
+                    + ${data.com.totalpay.toFixed(3)}(商业)
+                    = ${(data.gov.totalpay+data.com.totalpay).toFixed(3)}
+                </li>
+            </ul>
+            `
+            $("#loan_detail").html(content)
+        }
+
         const update_all = ()=>{
             const data = update_data()
             
@@ -182,6 +262,9 @@
             const vat = calc_vat(data)
             const pit = calc_PIT(data,vat)
 
+            const loans = calc_rate(data)
+            show_loan(loans)
+
             $("#vat").val(vat)
             $("#pit").val(pit)
             console.log({vat,pit,deedtax})
@@ -189,6 +272,7 @@
         const change_assign = (id_)=>{
             $(`#${id_}`).change(update_all)
         }
+        window.calc_compound = calc_compound
         change_assign("markprice");
         change_assign("price");
         change_assign("price_last")
@@ -196,5 +280,7 @@
         change_assign("realtype")
         change_assign("years")
         change_assign("only")
+        change_assign("gov_rate")
+        change_assign("com_rate")
     })
 </script>
